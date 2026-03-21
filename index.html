@@ -46,7 +46,7 @@
             </div>
 
             <button class="play-btn" onclick="startGame()">🚀 Chơi ngay!</button>
-            <p class="music-hint">🎵 Nhấn nút âm nhạc ở góc phải để bật nhạc nền</p>
+            <p class="music-hint">🔇 Nhấn nút nhạc ở góc phải để tắt tiếng</p>
         </div>
     </div>
 
@@ -86,8 +86,8 @@
     </div>
 
     <!-- Music Toggle FAB -->
-    <button class="music-fab" id="musicFab" onclick="toggleMusic()" title="Bật/tắt nhạc">
-        🔇
+    <button class="music-fab playing" id="musicFab" onclick="toggleMusic()" title="Bật/tắt nhạc">
+        🎵
     </button>
 
     <script src="sounds.js"></script>
@@ -100,6 +100,19 @@
                     .catch(e => console.log('SW error', e));
             });
         }
+
+        // Auto-start music on first user interaction
+        let musicStarted = false;
+        document.addEventListener('click', function autoStart() {
+            if (!musicStarted) {
+                musicStarted = true;
+                SoundSystem.startMusic();
+            }
+        }, { once: false });
+        // Actually start on first click
+        document.addEventListener('click', () => {
+            if (!musicStarted) { musicStarted = true; SoundSystem.startMusic(); }
+        }, { once: true });
 
         function toggleMusic() {
             const playing = SoundSystem.toggle();
