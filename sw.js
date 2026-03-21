@@ -1,9 +1,10 @@
-const CACHE = 'ghep-hinh-vui-v1';
+const CACHE = 'ghep-hinh-vui-v2';
 const ASSETS = [
     '/',
     '/index.html',
     '/style.css',
     '/app.js',
+    '/sounds.js',
     '/manifest.json',
     '/images/hero_banner.png',
     '/images/icon-192.png',

@@ -578,3 +578,51 @@ body {
         font-size: 26px;
     }
 }
+
+/* ===== MUSIC TOGGLE FAB ===== */
+.music-fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: none;
+    background: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.music-fab:active {
+    transform: scale(0.9);
+}
+
+.music-fab.playing {
+    background: linear-gradient(135deg, #6C63FF, #A78BFA);
+    animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 16px rgba(108, 99, 255, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 4px 28px rgba(108, 99, 255, 0.6);
+    }
+}
+
+.music-hint {
+    font-size: 12px;
+    color: #aaa;
+    text-align: center;
+    margin-top: 8px;
+}

@@ -56,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
             G.cat = k;
             grid.querySelectorAll('.cat-btn').forEach(x => x.classList.remove('active'));
             b.classList.add('active');
+            if (typeof SoundSystem !== 'undefined') SoundSystem.sfxClick();
         };
         grid.appendChild(b);
     });
@@ -120,6 +121,7 @@ function flip(card) {
 
     card.classList.add('flipped');
     G.flipped.push(card);
+    if (typeof SoundSystem !== 'undefined') SoundSystem.sfxFlip();
 
     if (G.flipped.length === 2) {
         G.moveCount++;
@@ -129,6 +131,7 @@ function flip(card) {
         G.locked = true;
 
         if (a.dataset.key === b.dataset.key) {
+            if (typeof SoundSystem !== 'undefined') SoundSystem.sfxMatch();
             setTimeout(() => {
                 a.classList.add('matched'); a.classList.remove('flipped');
                 b.classList.add('matched'); b.classList.remove('flipped');
@@ -138,6 +141,7 @@ function flip(card) {
                 if (G.matchCount === G.totalPairs) setTimeout(showWin, 500);
             }, 350);
         } else {
+            if (typeof SoundSystem !== 'undefined') SoundSystem.sfxWrong();
             setTimeout(() => {
                 a.classList.add('wrong'); b.classList.add('wrong');
                 setTimeout(() => {
@@ -189,6 +193,7 @@ function showWin() {
         c.appendChild(p);
     }
 
+    if (typeof SoundSystem !== 'undefined') SoundSystem.sfxWin();
     show('winScreen');
 }
 

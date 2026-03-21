@@ -46,6 +46,7 @@
             </div>
 
             <button class="play-btn" onclick="startGame()">🚀 Chơi ngay!</button>
+            <p class="music-hint">🎵 Nhấn nút âm nhạc ở góc phải để bật nhạc nền</p>
         </div>
     </div>
 
@@ -84,14 +85,26 @@
         </div>
     </div>
 
+    <!-- Music Toggle FAB -->
+    <button class="music-fab" id="musicFab" onclick="toggleMusic()" title="Bật/tắt nhạc">
+        🔇
+    </button>
+
+    <script src="sounds.js"></script>
     <script src="app.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
+                navigator.serviceWorker.register('sw.js')
                     .then(r => console.log('SW registered', r.scope))
                     .catch(e => console.log('SW error', e));
             });
+        }
+
+        function toggleMusic() {
+            const playing = SoundSystem.toggle();
+            document.getElementById('musicFab').textContent = playing ? '🎵' : '🔇';
+            document.getElementById('musicFab').classList.toggle('playing', playing);
         }
     </script>
 </body>
