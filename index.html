@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🧩 Ghép Hình Vui — Trò Chơi Lật Thẻ Cho Bé</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="images/icon-180.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Ghép Hình Vui">
+    <meta name="theme-color" content="#6C63FF">
+</head>
+
+<body>
+    <!-- ===== START SCREEN ===== -->
+    <div class="screen active" id="startScreen">
+        <div class="start-wrap">
+            <img src="images/hero_banner.png" alt="" class="hero-img">
+            <h1 class="title">Ghép Hình Vui</h1>
+            <p class="subtitle">✨ Trò chơi lật thẻ cho bé yêu ✨</p>
+
+            <div class="picker">
+                <h3>🎨 Chọn chủ đề</h3>
+                <div class="cat-grid" id="categories"></div>
+            </div>
+
+            <div class="picker">
+                <h3>⭐ Chọn độ khó</h3>
+                <div class="diff-grid">
+                    <button class="diff active" data-pairs="6" onclick="pickDiff(this)"><span>🌟</span>Dễ<small>6
+                            cặp</small></button>
+                    <button class="diff" data-pairs="8" onclick="pickDiff(this)"><span>⭐</span>Vừa<small>8
+                            cặp</small></button>
+                    <button class="diff" data-pairs="10" onclick="pickDiff(this)"><span>💫</span>Khó<small>10
+                            cặp</small></button>
+                    <button class="diff" data-pairs="15" onclick="pickDiff(this)"><span>🌠</span>Siêu khó<small>15
+                            cặp</small></button>
+                </div>
+            </div>
+
+            <button class="play-btn" onclick="startGame()">🚀 Chơi ngay!</button>
+        </div>
+    </div>
+
+    <!-- ===== GAME SCREEN ===== -->
+    <div class="screen" id="gameScreen">
+        <div class="topbar">
+            <button class="icon-btn" onclick="goHome()">🏠</button>
+            <div class="stats">
+                <div class="st">⏱️ <b id="timer">00:00</b></div>
+                <div class="st">🎯 <b id="moves">0</b></div>
+                <div class="st">✅ <b id="matched">0/<span id="totalPairs">6</span></b></div>
+            </div>
+            <button class="icon-btn" onclick="restartGame()">🔄</button>
+        </div>
+        <div class="board-wrap">
+            <div class="board" id="board"></div>
+        </div>
+    </div>
+
+    <!-- ===== WIN SCREEN ===== -->
+    <div class="screen" id="winScreen">
+        <div class="win-bg">
+            <div id="confetti"></div>
+            <div class="win-card">
+                <div class="trophy">🏆</div>
+                <h2>Tuyệt vời!</h2>
+                <p>Bé đã hoàn thành xuất sắc!</p>
+                <div class="win-row">
+                    <div class="win-st"><small>⏱️ Thời gian</small><b id="winTime">00:00</b></div>
+                    <div class="win-st"><small>🎯 Số lượt</small><b id="winMoves">0</b></div>
+                    <div class="win-st"><small>Đánh giá</small><b id="winStars">⭐⭐⭐</b></div>
+                </div>
+                <button class="play-btn" onclick="restartGame()">🔄 Chơi lại</button>
+                <button class="play-btn alt" onclick="goHome()">🏠 Đổi chủ đề</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(r => console.log('SW registered', r.scope))
+                    .catch(e => console.log('SW error', e));
+            });
+        }
+    </script>
+</body>
+
+</html>
