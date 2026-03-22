@@ -32,6 +32,7 @@ body {
     margin: 0 auto;
     padding: 16px;
     text-align: center;
+    width: 100%;
 }
 
 .hero-img {
@@ -241,6 +242,7 @@ body {
     gap: 6px;
     width: 100%;
     max-width: 420px;
+    margin: 0 auto;
 }
 
 /* Column variants set by JS */
@@ -576,6 +578,255 @@ body {
 
     .title {
         font-size: 26px;
+    }
+}
+
+/* ===== TABLET — iPad mini & iPad Air ===== */
+@media (min-width: 600px) {
+    .start-wrap {
+        max-width: 680px;
+        padding: 24px;
+    }
+
+    .hero-img {
+        max-width: 320px;
+        margin: 16px auto 20px;
+    }
+
+    .title {
+        font-size: 40px;
+    }
+
+    .subtitle {
+        font-size: 16px;
+        margin-bottom: 24px;
+    }
+
+    .picker h3 {
+        font-size: 20px;
+        margin-bottom: 12px;
+    }
+
+    .cat-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+    }
+
+    .cat-btn {
+        padding: 12px 6px;
+        min-height: 80px;
+        border-radius: 16px;
+    }
+
+    .cat-emoji {
+        font-size: 30px;
+    }
+
+    .cat-name {
+        font-size: 12px;
+        margin-top: 4px;
+    }
+
+    .diff-grid {
+        gap: 10px;
+    }
+
+    .diff {
+        padding: 14px 8px;
+        font-size: 14px;
+        border-radius: 16px;
+    }
+
+    .diff span {
+        font-size: 24px;
+    }
+
+    .diff small {
+        font-size: 11px;
+    }
+
+    .play-btn {
+        padding: 18px;
+        font-size: 20px;
+        border-radius: 16px;
+        margin-top: 16px;
+    }
+
+    /* Game board */
+    .topbar {
+        padding: 10px 16px;
+    }
+
+    .icon-btn {
+        width: 48px;
+        height: 48px;
+        font-size: 22px;
+        border-radius: 12px;
+    }
+
+    .stats {
+        gap: 12px;
+    }
+
+    .st {
+        font-size: 15px;
+        padding: 6px 12px;
+        border-radius: 10px;
+    }
+
+    .board-wrap {
+        padding: 16px;
+    }
+
+    .board {
+        max-width: 560px;
+        gap: 10px;
+    }
+
+    .card-front::after {
+        font-size: 32px;
+    }
+
+    .card-emoji {
+        font-size: 40px;
+    }
+
+    .card-letter {
+        font-size: 44px;
+    }
+
+    /* Win */
+    .win-card {
+        padding: 40px 32px;
+        border-radius: 28px;
+        max-width: 440px;
+    }
+
+    .trophy {
+        font-size: 64px;
+    }
+
+    .win-card h2 {
+        font-size: 32px;
+    }
+
+    .win-st {
+        padding: 14px 10px;
+    }
+
+    .win-st b {
+        font-size: 18px;
+    }
+
+    .music-hint {
+        font-size: 13px;
+    }
+}
+
+/* ===== LARGE TABLET — iPad Air landscape, iPad Pro ===== */
+@media (min-width: 900px) {
+    .start-wrap {
+        max-width: 760px;
+        padding: 32px;
+    }
+
+    .hero-img {
+        max-width: 360px;
+    }
+
+    .title {
+        font-size: 48px;
+    }
+
+    .cat-btn {
+        min-height: 90px;
+    }
+
+    .cat-emoji {
+        font-size: 34px;
+    }
+
+    .cat-name {
+        font-size: 13px;
+    }
+
+    .board {
+        max-width: 640px;
+        gap: 12px;
+    }
+
+    .card-emoji {
+        font-size: 48px;
+    }
+
+    .card-letter {
+        font-size: 52px;
+    }
+
+    .card-front::after {
+        font-size: 36px;
+    }
+}
+
+/* ===== LANDSCAPE on tablets ===== */
+@media (max-height: 600px) and (min-width: 600px) {
+    .hero-img {
+        max-width: 160px;
+        margin: 4px auto 8px;
+    }
+
+    .title {
+        font-size: 28px;
+    }
+
+    .subtitle {
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+
+    .start-wrap {
+        padding: 8px 24px;
+    }
+
+    .cat-btn {
+        min-height: 56px;
+        padding: 6px 4px;
+    }
+
+    .cat-emoji {
+        font-size: 22px;
+    }
+
+    .cat-name {
+        font-size: 9px;
+    }
+
+    .picker {
+        margin-bottom: 8px;
+    }
+
+    .picker h3 {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .diff {
+        padding: 8px 4px;
+        font-size: 11px;
+    }
+
+    .play-btn {
+        padding: 12px;
+        font-size: 16px;
+        margin-top: 8px;
+    }
+
+    .board-wrap {
+        padding: 8px;
+    }
+
+    .board {
+        max-width: 90vh;
     }
 }
 
