@@ -26,8 +26,14 @@
             <h1 class="title">Ghép Hình Vui</h1>
             <p class="subtitle">✨ Trò chơi lật thẻ cho bé yêu ✨</p>
 
+            <!-- Theme Pack Selector -->
             <div class="picker">
-                <h3>🎨 Chọn chủ đề</h3>
+                <h3>🎭 Chủ đề <span class="pack-badge" id="currentPackName"></span></h3>
+                <div class="pack-scroll" id="packSelector"></div>
+            </div>
+
+            <div class="picker">
+                <h3>🎨 Chọn thể loại</h3>
                 <div class="cat-grid" id="categories"></div>
             </div>
 
@@ -46,7 +52,7 @@
             </div>
 
             <button class="play-btn" onclick="startGame()">🚀 Chơi ngay!</button>
-            <p class="music-hint">🔇 Nhấn nút nhạc ở góc phải để tắt tiếng</p>
+            <div class="safe-bottom"></div>
         </div>
     </div>
 
@@ -90,20 +96,15 @@
 
     <!-- Mini Music Player -->
     <div class="mini-player" id="miniPlayer">
-        <div class="mp-track" id="track-title">Loading...</div>
+        <div class="mp-track" id="track-title">🎵 Nhấn để phát nhạc...</div>
         <div class="mp-controls">
             <button class="mp-btn" onclick="MusicPlayer.prevTrack()" title="Trước">⏮️</button>
-            <button class="mp-btn big" id="musicFab" onclick="toggleMusic()" title="Phát/Dừng">🎵</button>
+            <button class="mp-btn big" id="musicFab" onclick="toggleMusic()" title="Phát/Dừng">▶️</button>
             <button class="mp-btn" onclick="MusicPlayer.nextTrack()" title="Kế tiếp">⏭️</button>
             <button class="mp-btn" onclick="MusicPlayer.reshufflePlaylist()" title="Trộn ngẫu nhiên">🔀</button>
         </div>
-        <div class="mp-info" id="track-info">1/100</div>
+        <div class="mp-info" id="track-info">0/100</div>
     </div>
-
-    <!-- Music Toggle FAB (when player is hidden) -->
-    <button class="music-fab" id="musicFabFloat" onclick="toggleMusic()" title="Bật nhạc">
-        🎵
-    </button>
 
     <script src="sounds.js"></script>
     <script src="app.js"></script>
@@ -116,29 +117,31 @@
             });
         }
 
-        // Init playlist on load
+        // Init playlist immediately
         MusicPlayer.init();
 
-        // Auto-start on first click
+        // Auto-start music on first interaction
         let musicStarted = false;
-        document.addEventListener('click', () => {
+        function tryStartMusic() {
             if (!musicStarted) {
                 musicStarted = true;
                 MusicPlayer.play();
-                document.getElementById('musicFabFloat').style.display = 'none';
+                const fab = document.getElementById('musicFab');
+                if (fab) fab.textContent = '⏸️';
             }
-        }, { once: true });
+        }
+        document.addEventListener('click', tryStartMusic, { once: true });
+        document.addEventListener('touchstart', tryStartMusic, { once: true });
 
         function toggleMusic() {
-            if (!musicStarted) {
-                musicStarted = true;
-                MusicPlayer.play();
-                document.getElementById('musicFabFloat').style.display = 'none';
-                return;
-            }
+            if (!musicStarted) { tryStartMusic(); return; }
             const playing = MusicPlayer.toggle();
-            document.getElementById('musicFabFloat').style.display = playing ? 'none' : 'flex';
+            const fab = document.getElementById('musicFab');
+            if (fab) fab.textContent = playing ? '⏸️' : '▶️';
         }
+
+        // Show mini player always
+        document.getElementById('miniPlayer').classList.add('visible');
     </script>
 </body>
 
