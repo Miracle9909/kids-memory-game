@@ -85,8 +85,23 @@
         </div>
     </div>
 
-    <!-- Music Toggle FAB -->
-    <button class="music-fab playing" id="musicFab" onclick="toggleMusic()" title="Bật/tắt nhạc">
+    <!-- Hidden YouTube Player -->
+    <div id="yt-player" style="position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;"></div>
+
+    <!-- Mini Music Player -->
+    <div class="mini-player" id="miniPlayer">
+        <div class="mp-track" id="track-title">Loading...</div>
+        <div class="mp-controls">
+            <button class="mp-btn" onclick="MusicPlayer.prevTrack()" title="Trước">⏮️</button>
+            <button class="mp-btn big" id="musicFab" onclick="toggleMusic()" title="Phát/Dừng">🎵</button>
+            <button class="mp-btn" onclick="MusicPlayer.nextTrack()" title="Kế tiếp">⏭️</button>
+            <button class="mp-btn" onclick="MusicPlayer.reshufflePlaylist()" title="Trộn ngẫu nhiên">🔀</button>
+        </div>
+        <div class="mp-info" id="track-info">1/100</div>
+    </div>
+
+    <!-- Music Toggle FAB (when player is hidden) -->
+    <button class="music-fab" id="musicFabFloat" onclick="toggleMusic()" title="Bật nhạc">
         🎵
     </button>
 
@@ -101,23 +116,28 @@
             });
         }
 
-        // Auto-start music on first user interaction
+        // Init playlist on load
+        MusicPlayer.init();
+
+        // Auto-start on first click
         let musicStarted = false;
-        document.addEventListener('click', function autoStart() {
+        document.addEventListener('click', () => {
             if (!musicStarted) {
                 musicStarted = true;
-                SoundSystem.startMusic();
+                MusicPlayer.play();
+                document.getElementById('musicFabFloat').style.display = 'none';
             }
-        }, { once: false });
-        // Actually start on first click
-        document.addEventListener('click', () => {
-            if (!musicStarted) { musicStarted = true; SoundSystem.startMusic(); }
         }, { once: true });
 
         function toggleMusic() {
-            const playing = SoundSystem.toggle();
-            document.getElementById('musicFab').textContent = playing ? '🎵' : '🔇';
-            document.getElementById('musicFab').classList.toggle('playing', playing);
+            if (!musicStarted) {
+                musicStarted = true;
+                MusicPlayer.play();
+                document.getElementById('musicFabFloat').style.display = 'none';
+                return;
+            }
+            const playing = MusicPlayer.toggle();
+            document.getElementById('musicFabFloat').style.display = playing ? 'none' : 'flex';
         }
     </script>
 </body>

@@ -830,7 +830,79 @@ body {
     }
 }
 
-/* ===== MUSIC TOGGLE FAB ===== */
+/* ===== MINI MUSIC PLAYER ===== */
+.mini-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 6px 12px 10px;
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+    border-top: 1px solid rgba(108, 99, 255, 0.15);
+}
+
+.mini-player.visible {
+    display: flex;
+}
+
+.mp-track {
+    font-size: 11px;
+    font-weight: 700;
+    color: #6C63FF;
+    max-width: 280px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    margin-bottom: 2px;
+}
+
+.mp-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mp-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: #F0EEFF;
+    border-radius: 50%;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.mp-btn:active {
+    transform: scale(0.9);
+}
+
+.mp-btn.big {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+    background: linear-gradient(135deg, #6C63FF, #A78BFA);
+    color: #fff;
+}
+
+.mp-info {
+    font-size: 9px;
+    color: #aaa;
+    margin-top: 1px;
+}
+
+/* Music FAB (shown when paused) */
 .music-fab {
     position: fixed;
     bottom: 20px;
@@ -839,24 +911,20 @@ body {
     height: 52px;
     border-radius: 50%;
     border: none;
-    background: #fff;
+    background: linear-gradient(135deg, #6C63FF, #A78BFA);
     font-size: 24px;
     cursor: pointer;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 20px rgba(108, 99, 255, 0.4);
     z-index: 100;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s;
+    animation: pulse 2s ease infinite;
 }
 
 .music-fab:active {
     transform: scale(0.9);
-}
-
-.music-fab.playing {
-    background: linear-gradient(135deg, #6C63FF, #A78BFA);
-    animation: pulse 2s ease infinite;
 }
 
 @keyframes pulse {
@@ -876,4 +944,33 @@ body {
     color: #aaa;
     text-align: center;
     margin-top: 8px;
+}
+
+/* Add bottom padding when mini player visible */
+.board-wrap {
+    padding-bottom: 70px;
+}
+
+/* Tablet mini player */
+@media (min-width: 600px) {
+    .mp-track {
+        font-size: 13px;
+        max-width: 400px;
+    }
+
+    .mp-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    .mp-btn.big {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+    }
+
+    .mp-info {
+        font-size: 10px;
+    }
 }
