@@ -1,285 +1,164 @@
 /* ============================================ */
-/* 🎵 Music Playlist — YouTube IFrame API       */
-/* 100 instrumental songs (VN + EN)             */
-/* + SFX via Web Audio API                      */
+/* 🎵 Background Music — Web Audio API           */
+/* Procedural melodies + SFX                     */
+/* Works on ALL devices including iOS Safari     */
 /* ============================================ */
 
 const MusicPlayer = (() => {
-    let player = null;
-    let isReady = false;
+    let ctx = null;
+    let masterGain = null;
     let isPlaying = false;
-    let currentIndex = 0;
-    let shuffled = [];
+    let melodyTimer = null;
+    let bassTimer = null;
+    let currentTrack = 0;
 
-    // 100 Popular Instrumental / No-Lyrics Tracks (YouTube Video IDs)
-    // Mix of Vietnamese & English favorites
-    const PLAYLIST = [
-        // 🇻🇳 Vietnamese Instrumental / Piano / Lo-fi
-        { id: 'kgx4WGK0oNU', title: 'Có Chắc Yêu Là Đây - Piano' },
-        { id: 'J7UwSVOI6GY', title: 'Nơi Này Có Anh - Piano' },
-        { id: '2dOSbCiSZh0', title: 'Hãy Trao Cho Anh - Piano' },
-        { id: 'ZBhMGJMFqW4', title: 'Từ Đó - Piano Cover' },
-        { id: 'qFLhGq0060w', title: 'See Tình - Piano' },
-        { id: 'b2HcP0K4B5Q', title: 'Waiting For You - Piano' },
-        { id: 'OWJ-RQ2u6Bw', title: 'Nhạc Không Lời Việt Nam Hay' },
-        { id: 'sGR4VCKaSaM', title: 'Nhạc Thiếu Nhi Piano Medley' },
-        { id: '7HOgUsOxLp0', title: 'Bống Bống Bang Bang - Piano' },
-        { id: 'qqB2bMELWqs', title: 'Em Gái Mưa - Piano' },
-        { id: 'h2VDYvS9xr0', title: 'Đừng Như Thói Quen - Piano' },
-        { id: 'CKojkaofOE4', title: 'Chúng Ta Của Hiện Tại - Piano' },
-        { id: 'Y0aDqGxIOJA', title: 'Nàng Thơ - Piano' },
-        { id: 'oUFJJNQGwhk', title: 'Piano Relaxing Vietnamese' },
-        { id: 'mNEUkqRoVkQ', title: 'Vietnamese Cafe Music' },
-
-        // 🌍 English Pop Instrumental / Piano Covers
-        { id: 'CvFH_6DNRCY', title: 'River Flows In You - Yiruma' },
-        { id: 'kG9KSWYg-Jc', title: 'Kiss The Rain - Yiruma' },
-        { id: '7maJOI3QMu0', title: 'Comptine - Amélie Soundtrack' },
-        { id: 'vGJTaP6anOU', title: 'A Thousand Years - Piano' },
-        { id: 'bDaHZNoOhXc', title: 'Perfect - Ed Sheeran Piano' },
-        { id: 'lp-EO5I60KA', title: 'Someone Like You - Piano' },
-        { id: 'rtOvBOTyX00', title: 'All Of Me - Piano Cover' },
-        { id: 'rUokBZDu0GY', title: 'Thinking Out Loud - Piano' },
-        { id: 'RDYgmCqOJz4', title: 'Shape Of You - Piano' },
-        { id: 'FjiFGENWvOE', title: 'Let Her Go - Piano' },
-        { id: 'pB-5XG-DbAA', title: 'Stay With Me - Piano' },
-        { id: 'DHpOc-bAbV8', title: 'Say Something - Piano' },
-        { id: '3JWTaaS7LdU', title: 'I Will Always Love You - Piano' },
-        { id: 'hLQl3WQQoQ0', title: 'Someone You Loved - Piano' },
-        { id: 'nSDgHBxUbVQ', title: 'Photograph - Piano' },
-
-        // 🎹 Classical Piano / Relaxing
-        { id: 'WJ3-F02-F_Y', title: 'Moonlight Sonata - Beethoven' },
-        { id: '4Tr0otuiQuU', title: 'Fur Elise - Beethoven' },
-        { id: 'GRxofEmo3HA', title: 'Canon in D - Pachelbel' },
-        { id: 'YQ7S_bSpXrc', title: 'Spring Waltz - Chopin' },
-        { id: 'XpJEg6MTPzc', title: 'Clair de Lune - Debussy' },
-        { id: '75x6DncZDgI', title: 'The Entertainer - Joplin' },
-        { id: 'D1sZ_vwqwcE', title: 'Turkish March - Mozart' },
-        { id: 'NlprozGcs80', title: 'Gymnopédie No.1 - Satie' },
-        { id: 'S-Xm7s9eGxU', title: 'La Campanella - Liszt' },
-        { id: '_e2igZexpMs', title: 'Ballade Pour Adeline' },
-
-        // 🎶 Studio Ghibli / Anime Instrumental
-        { id: 'HskyMzuo_O4', title: 'Spirited Away - Piano' },
-        { id: 'I1kGi-gN9JQ', title: 'My Neighbor Totoro - Piano' },
-        { id: 'aNdoBlbWiGE', title: 'Howls Moving Castle - Piano' },
-        { id: 'YK9Y1MTquig', title: 'Princess Mononoke - Piano' },
-        { id: 'BJqb4e5VLIM', title: 'Castle In The Sky - Piano' },
-        { id: 'puEWb4N0sCc', title: 'Ghibli Music Box Collection' },
-        { id: 'sL-0F0ZVDyA', title: 'Ponyo - Piano' },
-        { id: '77hPYBWjOmQ', title: 'Kiki Delivery Service - Piano' },
-        { id: 'DkE1GG3qlKg', title: 'Studio Ghibli Piano Medley' },
-        { id: 'VwgIGcLmpZo', title: 'Anime Piano Best Of' },
-
-        // 🎼 K-Pop / J-Pop Instrumental
-        { id: 'LnB2SjFijRs', title: 'Spring Day BTS - Piano' },
-        { id: 'XQbUJBE0KKA', title: 'Dynamite BTS - Piano' },
-        { id: 'po_NfmZPTSs', title: 'Love Scenario - Piano' },
-        { id: '5mQz8p0Wd5U', title: 'BLACKPINK Piano Medley' },
-        { id: 'gJKOXd9NYSQ', title: 'IU Eight - Piano' },
-
-        // ☕ Lo-fi / Chill / Study Beats
-        { id: 'jfKfPfyJRdk', title: 'Lofi Hip Hop Radio - Chill' },
-        { id: 'lTRiuFIWV54', title: 'Lo-fi Chill Study Beats' },
-        { id: '5qap5aO4i9A', title: 'Chillhop Music - Peaceful' },
-        { id: 'DWcJFNfaw9c', title: 'Lo-fi Jazz Cafe' },
-        { id: 'kgx4WGK0oNU', title: 'Chill Piano Beats' },
-
-        // 🎸 Acoustic / Guitar Instrumental
-        { id: 'wOMwO5T3yT4', title: 'Acoustic Guitar Relaxing' },
-        { id: 'Nop_ry7MgjE', title: 'Sungha Jung Medley' },
-        { id: 'QGR_NEBMjr4', title: 'Classical Guitar Best Of' },
-        { id: 'huyWwNdtiHY', title: 'Flamenco Guitar' },
-        { id: 'izQsgE0L450', title: 'Fingerstyle Guitar Cover' },
-
-        // 🎤 Disney / Pixar Instrumental
-        { id: 'V1bFr2SWP1I', title: 'Let It Go - Piano' },
-        { id: 'Oo3e8F12j7M', title: 'A Whole New World - Piano' },
-        { id: 'bEeaS6fuUoA', title: 'Beauty And The Beast - Piano' },
-        { id: 'POlkE4_DFSQ', title: 'Can You Feel The Love - Piano' },
-        { id: 'tYMff1wHc8A', title: 'Remember Me (Coco) - Piano' },
-        { id: 'nLqBZp4MPIE', title: 'Disney Piano Collection' },
-        { id: 'J__7VkROges', title: 'Moana Piano Medley' },
-        { id: 'KKz99FWNwJQ', title: 'Disney Lullaby Piano' },
-
-        // 🌙 Lullaby / Sleep / Kids Friendly
-        { id: 'hlWiI4xVXKY', title: 'Brahms Lullaby - Piano' },
-        { id: 'RJqoj7tHm50', title: 'Twinkle Twinkle Little Star' },
-        { id: 'C3MVcTRFBBI', title: 'Baby Mozart Lullaby' },
-        { id: 'Ju0DP4sZCfg', title: 'Sleep Music For Kids' },
-        { id: '1ZYbU82GVz4', title: 'Relaxing Kids Piano' },
-
-        // 🎵 Trending / Modern Covers
-        { id: 'rR94CDufS3E', title: 'Flowers - Miley Piano' },
-        { id: 'LGIl7FgoZCI', title: 'As It Was - Piano' },
-        { id: 'ZmDBbnmKFnI', title: 'Anti-Hero - Piano' },
-        { id: 'WNIbGWO4EVE', title: 'Blinding Lights - Piano' },
-        { id: 'gNi_6vlsDzs', title: 'Dandelions - Piano' },
-        { id: '7USjUCdHLfk', title: 'Unstoppable - Piano Cover' },
-        { id: 'FUjGf2Grrus', title: 'Calm Down - Piano' },
-        { id: 'y6120QOlsfU', title: 'Sandstorm - Piano' },
-        { id: 'r8OiC2HIwxQ', title: 'Believer - Piano' },
-        { id: 'Sh2-P3hzX60', title: 'Dance Monkey - Piano' },
-
-        // 🎻 Film Soundtracks
-        { id: 'w1FLZPFI3jc', title: 'Interstellar - Piano' },
-        { id: 'KKzB1rRk_10', title: 'Inception - Time Piano' },
-        { id: 'BciS5krYL80', title: 'Forrest Gump - Piano' },
-        { id: '0pPE2rJqNMY', title: 'La La Land - Piano' },
-        { id: 'Y-_U0zCJRds', title: 'Titanic Piano Cover' },
-        { id: 'jhf05vQJH7U', title: 'Harry Potter - Piano' },
+    // 10 Different melody patterns (scales/keys)
+    const TRACKS = [
+        { name: '🌸 Bản nhạc mùa xuân', scale: [261, 293, 329, 349, 392, 440, 493, 523], tempo: 280, key: 'C' },
+        { name: '🌙 Ru con ngủ', scale: [293, 329, 370, 392, 440, 493, 554, 587], tempo: 400, key: 'D' },
+        { name: '⭐ Bầu trời sao', scale: [329, 370, 415, 440, 493, 554, 622, 659], tempo: 320, key: 'E' },
+        { name: '🌊 Sóng biển', scale: [349, 392, 440, 466, 523, 587, 622, 698], tempo: 350, key: 'F' },
+        { name: '🦋 Cánh bướm', scale: [392, 440, 493, 523, 587, 659, 698, 784], tempo: 260, key: 'G' },
+        { name: '🌈 Cầu vồng', scale: [440, 493, 554, 587, 659, 698, 784, 880], tempo: 300, key: 'A' },
+        { name: '🍀 Đồng cỏ xanh', scale: [261, 293, 329, 392, 440, 523, 587, 659], tempo: 310, key: 'Cm' },
+        { name: '🎠 Vòng đu quay', scale: [329, 392, 440, 493, 587, 659, 698, 784], tempo: 240, key: 'Em' },
+        { name: '🏰 Lâu đài cổ tích', scale: [349, 440, 466, 523, 587, 698, 784, 880], tempo: 340, key: 'Fm' },
+        { name: '🎪 Ngày hội', scale: [392, 440, 523, 587, 659, 784, 880, 1047], tempo: 220, key: 'Gm' },
     ];
 
-    function loadYouTubeAPI() {
-        if (document.getElementById('yt-api')) return;
-        const tag = document.createElement('script');
-        tag.id = 'yt-api';
-        tag.src = 'https://www.youtube.com/iframe_api';
-        document.head.appendChild(tag);
-    }
-
     function init() {
-        shuffled = shuffleArr([...PLAYLIST]);
-        currentIndex = 0;
-        loadYouTubeAPI();
+        currentTrack = Math.floor(Math.random() * TRACKS.length);
     }
 
-    // Called by YouTube API when ready
-    window.onYouTubeIframeAPIReady = function () {
-        player = new YT.Player('yt-player', {
-            height: '0',
-            width: '0',
-            videoId: shuffled[0]?.id || PLAYLIST[0].id,
-            playerVars: {
-                autoplay: 0,
-                controls: 0,
-                disablekb: 1,
-                fs: 0,
-                modestbranding: 1,
-                rel: 0,
-                playsinline: 1,
-            },
-            events: {
-                onReady: () => { isReady = true; },
-                onStateChange: onPlayerStateChange,
-                onError: () => { nextTrack(); }
-            }
-        });
-    };
-
-    function onPlayerStateChange(e) {
-        if (e.data === YT.PlayerState.ENDED) {
-            nextTrack();
+    function ensureCtx() {
+        if (!ctx) {
+            ctx = new (window.AudioContext || window.webkitAudioContext)();
+            masterGain = ctx.createGain();
+            masterGain.gain.value = 0.15;
+            masterGain.connect(ctx.destination);
         }
+        if (ctx.state === 'suspended') ctx.resume();
+    }
+
+    function playNote(freq, time, dur, type = 'sine', vol = 0.5) {
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+
+        g.gain.setValueAtTime(0, time);
+        g.gain.linearRampToValueAtTime(vol, time + 0.05);
+        g.gain.setValueAtTime(vol * 0.8, time + dur * 0.6);
+        g.gain.linearRampToValueAtTime(0, time + dur);
+
+        osc.connect(g);
+        g.connect(masterGain);
+        osc.start(time);
+        osc.stop(time + dur + 0.02);
+    }
+
+    function generateMelody() {
+        if (!isPlaying || !ctx) return;
+        const track = TRACKS[currentTrack];
+        const scale = track.scale;
+        const now = ctx.currentTime;
+
+        // Play 8 notes as a phrase
+        for (let i = 0; i < 8; i++) {
+            const note = scale[Math.floor(Math.random() * scale.length)];
+            const t = now + (i * track.tempo / 1000);
+            const dur = track.tempo / 1000 * 0.85;
+
+            // Main melody (sine = soft/sweet)
+            playNote(note, t, dur, 'sine', 0.4);
+
+            // Sometimes add harmony
+            if (Math.random() > 0.6) {
+                playNote(note * 1.5, t, dur * 0.7, 'triangle', 0.15);
+            }
+        }
+
+        // Bass: root note
+        const root = scale[0] / 2;
+        playNote(root, now, track.tempo * 4 / 1000, 'triangle', 0.25);
+        playNote(scale[4] / 2, now + track.tempo * 4 / 1000, track.tempo * 4 / 1000, 'triangle', 0.2);
+
+        // Schedule next phrase
+        melodyTimer = setTimeout(generateMelody, track.tempo * 8);
     }
 
     function play() {
-        if (!isReady) {
-            // Retry after API loads
-            setTimeout(play, 500);
-            return;
-        }
-        player.loadVideoById(shuffled[currentIndex].id);
-        player.setVolume(40);
+        ensureCtx();
         isPlaying = true;
+        generateMelody();
         updateUI();
     }
 
     function pause() {
-        if (!isReady) return;
-        player.pauseVideo();
         isPlaying = false;
-        updateUI();
-    }
-
-    function resume() {
-        if (!isReady) return;
-        player.playVideo();
-        isPlaying = true;
+        clearTimeout(melodyTimer);
+        clearTimeout(bassTimer);
         updateUI();
     }
 
     function toggle() {
-        if (!isReady) {
-            init();
-            setTimeout(() => { play(); }, 1000);
-            isPlaying = true;
-            updateUI();
-            return isPlaying;
-        }
-        if (isPlaying) { pause(); } else { resume(); }
+        if (isPlaying) pause(); else play();
         return isPlaying;
     }
 
     function nextTrack() {
-        currentIndex = (currentIndex + 1) % shuffled.length;
-        if (isReady && isPlaying) {
-            player.loadVideoById(shuffled[currentIndex].id);
-            player.setVolume(40);
-        }
+        const wasPlaying = isPlaying;
+        pause();
+        currentTrack = (currentTrack + 1) % TRACKS.length;
+        if (wasPlaying) setTimeout(play, 100);
         updateUI();
     }
 
     function prevTrack() {
-        currentIndex = (currentIndex - 1 + shuffled.length) % shuffled.length;
-        if (isReady && isPlaying) {
-            player.loadVideoById(shuffled[currentIndex].id);
-            player.setVolume(40);
-        }
+        const wasPlaying = isPlaying;
+        pause();
+        currentTrack = (currentTrack - 1 + TRACKS.length) % TRACKS.length;
+        if (wasPlaying) setTimeout(play, 100);
+        updateUI();
+    }
+
+    function reshufflePlaylist() {
+        const wasPlaying = isPlaying;
+        pause();
+        currentTrack = Math.floor(Math.random() * TRACKS.length);
+        if (wasPlaying) setTimeout(play, 100);
         updateUI();
     }
 
     function getCurrentTitle() {
-        return shuffled[currentIndex]?.title || 'Loading...';
+        return TRACKS[currentTrack].name;
     }
 
     function getTrackInfo() {
-        return `${currentIndex + 1}/${shuffled.length}`;
+        return `${currentTrack + 1}/${TRACKS.length}`;
     }
 
     function updateUI() {
         const titleEl = document.getElementById('track-title');
         const infoEl = document.getElementById('track-info');
-        const fabEl = document.getElementById('musicFab');
+        const fabEl = document.getElementById('musicFab') || document.getElementById('musicPlayBtn');
         const miniEl = document.getElementById('miniPlayer');
 
         if (titleEl) titleEl.textContent = getCurrentTitle();
         if (infoEl) infoEl.textContent = getTrackInfo();
-        if (fabEl) {
-            fabEl.textContent = isPlaying ? '🎵' : '🔇';
-            fabEl.classList.toggle('playing', isPlaying);
-        }
-        if (miniEl) miniEl.classList.toggle('visible', isPlaying);
-    }
-
-    function shuffleArr(a) {
-        for (let i = a.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [a[i], a[j]] = [a[j], a[i]];
-        }
-        return a;
-    }
-
-    function reshufflePlaylist() {
-        shuffled = shuffleArr([...PLAYLIST]);
-        currentIndex = 0;
-        if (isReady && isPlaying) {
-            player.loadVideoById(shuffled[0].id);
-            player.setVolume(40);
-        }
-        updateUI();
+        if (fabEl) fabEl.textContent = isPlaying ? '⏸️' : '▶️';
+        if (miniEl) miniEl.classList.toggle('visible', true);
     }
 
     return {
         init, play, pause, toggle, nextTrack, prevTrack,
         reshufflePlaylist, getCurrentTitle, getTrackInfo,
         get isPlaying() { return isPlaying; },
-        get totalTracks() { return PLAYLIST.length; }
+        get totalTracks() { return TRACKS.length; }
     };
 })();
 
-// ===== SFX (keep from Web Audio API) =====
+// ===== SFX =====
 const SFX = (() => {
     let ctx = null;
     let gain = null;
@@ -319,7 +198,7 @@ const SFX = (() => {
     };
 })();
 
-// Backward compatibility
+// Backward compat
 const SoundSystem = {
     startMusic: () => MusicPlayer.play(),
     stopMusic: () => MusicPlayer.pause(),

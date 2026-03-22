@@ -91,19 +91,16 @@
         </div>
     </div>
 
-    <!-- Hidden YouTube Player -->
-    <div id="yt-player" style="position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;"></div>
-
     <!-- Mini Music Player -->
     <div class="mini-player" id="miniPlayer">
-        <div class="mp-track" id="track-title">🎵 Nhấn để phát nhạc...</div>
+        <div class="mp-track" id="track-title">🎵 Nhấn ▶ để phát nhạc nền</div>
         <div class="mp-controls">
             <button class="mp-btn" onclick="MusicPlayer.prevTrack()" title="Trước">⏮️</button>
             <button class="mp-btn big" id="musicFab" onclick="toggleMusic()" title="Phát/Dừng">▶️</button>
             <button class="mp-btn" onclick="MusicPlayer.nextTrack()" title="Kế tiếp">⏭️</button>
             <button class="mp-btn" onclick="MusicPlayer.reshufflePlaylist()" title="Trộn ngẫu nhiên">🔀</button>
         </div>
-        <div class="mp-info" id="track-info">0/100</div>
+        <div class="mp-info" id="track-info">0/10</div>
     </div>
 
     <script src="sounds.js"></script>
