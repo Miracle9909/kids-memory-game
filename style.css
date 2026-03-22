@@ -352,12 +352,16 @@ body {
 .card.flipped .card-inner,
 .card.matched .card-inner {
     transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
 }
 
 .card-front,
 .card-back {
     position: absolute;
-    inset: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     border-radius: 12px;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
@@ -385,6 +389,7 @@ body {
     background: #fff;
     border: 2px solid #E0E0E0;
     transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
     z-index: 1;
     flex-direction: column;
 }
@@ -750,7 +755,7 @@ body {
     }
 
     .board {
-        max-width: 560px;
+        max-width: 700px;
         gap: 10px;
     }
 
@@ -907,16 +912,16 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    padding: 6px 12px 10px;
-    z-index: 100;
+    padding: 6px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    z-index: 9999;
     display: none;
     flex-direction: column;
     align-items: center;
-    box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
-    border-top: 1px solid rgba(108, 99, 255, 0.15);
+    box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.1);
+    border-top: 2px solid rgba(108, 99, 255, 0.2);
 }
 
 .mini-player.visible {
