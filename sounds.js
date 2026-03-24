@@ -1,6 +1,6 @@
 /* ============================================ */
 /* 🎵 Background Music — Web Audio API           */
-/* Procedural melodies + SFX                     */
+/* 5 bài nhạc thiếu nhi vui nhộn                 */
 /* Works on ALL devices including iOS Safari     */
 /* ============================================ */
 
@@ -12,18 +12,60 @@ const MusicPlayer = (() => {
     let bassTimer = null;
     let currentTrack = 0;
 
-    // 10 Different melody patterns (scales/keys)
+    // Note frequency helper
+    const N = {
+        C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00, B4: 493.88,
+        C5: 523.25, D5: 587.33, E5: 659.26, F5: 698.46, G5: 783.99, A5: 880.00,
+        C3: 130.81, D3: 146.83, E3: 164.81, F3: 174.61, G3: 196.00, A3: 220.00, B3: 246.94
+    };
+
+    // 5 bài thiếu nhi vui nhộn — mỗi bài có melody cố định
     const TRACKS = [
-        { name: '🌸 Bản nhạc mùa xuân', scale: [261, 293, 329, 349, 392, 440, 493, 523], tempo: 280, key: 'C' },
-        { name: '🌙 Ru con ngủ', scale: [293, 329, 370, 392, 440, 493, 554, 587], tempo: 400, key: 'D' },
-        { name: '⭐ Bầu trời sao', scale: [329, 370, 415, 440, 493, 554, 622, 659], tempo: 320, key: 'E' },
-        { name: '🌊 Sóng biển', scale: [349, 392, 440, 466, 523, 587, 622, 698], tempo: 350, key: 'F' },
-        { name: '🦋 Cánh bướm', scale: [392, 440, 493, 523, 587, 659, 698, 784], tempo: 260, key: 'G' },
-        { name: '🌈 Cầu vồng', scale: [440, 493, 554, 587, 659, 698, 784, 880], tempo: 300, key: 'A' },
-        { name: '🍀 Đồng cỏ xanh', scale: [261, 293, 329, 392, 440, 523, 587, 659], tempo: 310, key: 'Cm' },
-        { name: '🎠 Vòng đu quay', scale: [329, 392, 440, 493, 587, 659, 698, 784], tempo: 240, key: 'Em' },
-        { name: '🏰 Lâu đài cổ tích', scale: [349, 440, 466, 523, 587, 698, 784, 880], tempo: 340, key: 'Fm' },
-        { name: '🎪 Ngày hội', scale: [392, 440, 523, 587, 659, 784, 880, 1047], tempo: 220, key: 'Gm' },
+        {
+            name: '🎵 Một Con Vịt',
+            melody: [N.C4, N.E4, N.G4, N.C5, N.G4, N.E4, N.C4, N.D4,
+            N.E4, N.F4, N.G4, N.A4, N.G4, N.F4, N.E4, N.D4,
+            N.C4, N.C4, N.E4, N.E4, N.G4, N.G4, N.C5, N.C5,
+            N.A4, N.G4, N.F4, N.E4, N.D4, N.E4, N.C4, N.C4],
+            bass: [N.C3, N.G3, N.C3, N.G3, N.F3, N.C3, N.G3, N.C3],
+            tempo: 260, wave: 'sine', harmony: 'triangle'
+        },
+        {
+            name: '🐥 Con Gà Trống',
+            melody: [N.G4, N.G4, N.A4, N.A4, N.G4, N.G4, N.E4, N.E4,
+            N.F4, N.F4, N.E4, N.E4, N.D4, N.D4, N.C4, N.C4,
+            N.E4, N.E4, N.F4, N.F4, N.G4, N.G4, N.A4, N.A4,
+            N.G4, N.F4, N.E4, N.D4, N.C4, N.E4, N.G4, N.C5],
+            bass: [N.C3, N.E3, N.G3, N.C3, N.F3, N.A3, N.G3, N.C3],
+            tempo: 240, wave: 'sine', harmony: 'sine'
+        },
+        {
+            name: '🌟 Twinkle Twinkle',
+            melody: [N.C4, N.C4, N.G4, N.G4, N.A4, N.A4, N.G4, N.G4,
+            N.F4, N.F4, N.E4, N.E4, N.D4, N.D4, N.C4, N.C4,
+            N.G4, N.G4, N.F4, N.F4, N.E4, N.E4, N.D4, N.D4,
+            N.G4, N.G4, N.F4, N.F4, N.E4, N.E4, N.D4, N.D4],
+            bass: [N.C3, N.C3, N.F3, N.C3, N.F3, N.C3, N.G3, N.C3],
+            tempo: 320, wave: 'sine', harmony: 'triangle'
+        },
+        {
+            name: '🐸 Chú Ếch Con',
+            melody: [N.C4, N.D4, N.E4, N.F4, N.G4, N.G4, N.G4, N.G4,
+            N.A4, N.A4, N.G4, N.G4, N.F4, N.F4, N.E4, N.E4,
+            N.D4, N.D4, N.C4, N.C4, N.E4, N.G4, N.C5, N.C5,
+            N.G4, N.E4, N.C4, N.D4, N.E4, N.F4, N.G4, N.C4],
+            bass: [N.C3, N.G3, N.A3, N.E3, N.F3, N.C3, N.G3, N.C3],
+            tempo: 230, wave: 'sine', harmony: 'triangle'
+        },
+        {
+            name: '🎪 Nhong Nhong Nhong',
+            melody: [N.E4, N.G4, N.C5, N.C5, N.A4, N.G4, N.E4, N.G4,
+            N.A4, N.G4, N.F4, N.E4, N.D4, N.E4, N.F4, N.D4,
+            N.E4, N.G4, N.C5, N.C5, N.D5, N.C5, N.A4, N.G4,
+            N.F4, N.E4, N.D4, N.C4, N.D4, N.E4, N.C4, N.C4],
+            bass: [N.C3, N.E3, N.F3, N.G3, N.C3, N.A3, N.G3, N.C3],
+            tempo: 220, wave: 'sine', harmony: 'sine'
+        }
     ];
 
     function init() {
@@ -45,51 +87,57 @@ const MusicPlayer = (() => {
         const g = ctx.createGain();
         osc.type = type;
         osc.frequency.value = freq;
-
         g.gain.setValueAtTime(0, time);
         g.gain.linearRampToValueAtTime(vol, time + 0.05);
         g.gain.setValueAtTime(vol * 0.8, time + dur * 0.6);
         g.gain.linearRampToValueAtTime(0, time + dur);
-
         osc.connect(g);
         g.connect(masterGain);
         osc.start(time);
         osc.stop(time + dur + 0.02);
     }
 
+    let phraseIndex = 0;
+
     function generateMelody() {
         if (!isPlaying || !ctx) return;
         const track = TRACKS[currentTrack];
-        const scale = track.scale;
+        const mel = track.melody;
+        const bas = track.bass;
         const now = ctx.currentTime;
+        const noteDur = track.tempo / 1000;
 
-        // Play 8 notes as a phrase
+        // Play 8 melody notes as a phrase (cycle through the full melody)
         for (let i = 0; i < 8; i++) {
-            const note = scale[Math.floor(Math.random() * scale.length)];
-            const t = now + (i * track.tempo / 1000);
-            const dur = track.tempo / 1000 * 0.85;
+            const noteIdx = (phraseIndex * 8 + i) % mel.length;
+            const freq = mel[noteIdx];
+            const t = now + i * noteDur;
+            const dur = noteDur * 0.85;
 
-            // Main melody (sine = soft/sweet)
-            playNote(note, t, dur, 'sine', 0.4);
+            // Main melody
+            playNote(freq, t, dur, track.wave, 0.4);
 
-            // Sometimes add harmony
-            if (Math.random() > 0.6) {
-                playNote(note * 1.5, t, dur * 0.7, 'triangle', 0.15);
+            // Add subtle harmony on every other note
+            if (i % 2 === 0) {
+                playNote(freq * 1.5, t, dur * 0.6, track.harmony, 0.12);
             }
         }
 
-        // Bass: root note
-        const root = scale[0] / 2;
-        playNote(root, now, track.tempo * 4 / 1000, 'triangle', 0.25);
-        playNote(scale[4] / 2, now + track.tempo * 4 / 1000, track.tempo * 4 / 1000, 'triangle', 0.2);
+        // Bass: 2 notes per phrase
+        const bassIdx = (phraseIndex * 2) % bas.length;
+        playNote(bas[bassIdx], now, noteDur * 4, 'triangle', 0.22);
+        playNote(bas[(bassIdx + 1) % bas.length], now + noteDur * 4, noteDur * 4, 'triangle', 0.18);
 
-        // Schedule next phrase
+        phraseIndex++;
+        if (phraseIndex * 8 >= mel.length) phraseIndex = 0;
+
         melodyTimer = setTimeout(generateMelody, track.tempo * 8);
     }
 
     function play() {
         ensureCtx();
         isPlaying = true;
+        phraseIndex = 0;
         generateMelody();
         updateUI();
     }
@@ -110,6 +158,7 @@ const MusicPlayer = (() => {
         const wasPlaying = isPlaying;
         pause();
         currentTrack = (currentTrack + 1) % TRACKS.length;
+        phraseIndex = 0;
         if (wasPlaying) setTimeout(play, 100);
         updateUI();
     }
@@ -118,6 +167,7 @@ const MusicPlayer = (() => {
         const wasPlaying = isPlaying;
         pause();
         currentTrack = (currentTrack - 1 + TRACKS.length) % TRACKS.length;
+        phraseIndex = 0;
         if (wasPlaying) setTimeout(play, 100);
         updateUI();
     }
@@ -126,6 +176,7 @@ const MusicPlayer = (() => {
         const wasPlaying = isPlaying;
         pause();
         currentTrack = Math.floor(Math.random() * TRACKS.length);
+        phraseIndex = 0;
         if (wasPlaying) setTimeout(play, 100);
         updateUI();
     }

@@ -1,7 +1,35 @@
 /* ============================================ */
-/* 🧩 Ghép Hình Vui — FIXED CSS                 */
-/* Mobile-first, no overflow, proper card flip   */
+/* 🧩 Ghép Hình Vui — Lumi Dreamscape            */
+/* "The Dream-Hop Dimension" Design System        */
+/* Dreamy, bouncy, volumetric — Ages 3-8          */
 /* ============================================ */
+
+/* ===== DESIGN TOKENS ===== */
+:root {
+    --dream-primary: #6C63FF;
+    --dream-primary-glow: rgba(108, 99, 255, 0.25);
+    --dream-secondary: #FF65A3;
+    --dream-secondary-glow: rgba(255, 101, 163, 0.2);
+    --dream-tertiary: #40E0D0;
+    --dream-accent-gold: #FFD93D;
+    --dream-accent-pink: #FF8CC0;
+    --dream-bg: #F7F6FE;
+    --dream-surface-1: #F0F0F9;
+    --dream-surface-2: #E4E3F5;
+    --dream-surface-3: #D5D3EC;
+    --dream-text: #2D2E34;
+    --dream-text-muted: #8B8B9E;
+    --dream-white: #FFFFFF;
+    --dream-radius-sm: 14px;
+    --dream-radius-md: 20px;
+    --dream-radius-lg: 28px;
+    --dream-radius-full: 9999px;
+    --dream-shadow-cloud: 0 6px 24px rgba(108, 99, 255, 0.1);
+    --dream-shadow-glow: 0 8px 32px rgba(108, 99, 255, 0.18);
+    --dream-shadow-lifted: 0 16px 48px rgba(45, 46, 52, 0.1);
+    --dream-transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    --font-main: 'Nunito', 'SF Pro Rounded', sans-serif;
+}
 
 * {
     margin: 0;
@@ -10,16 +38,32 @@
 }
 
 body {
-    font-family: 'Nunito', sans-serif;
-    background: #EEF0FF;
-    color: #2D3436;
+    font-family: var(--font-main);
+    background: var(--dream-bg);
+    color: var(--dream-text);
     min-height: 100dvh;
     overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Dreamy ambient glow background */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 15% 30%, rgba(108, 99, 255, 0.07) 0%, transparent 50%),
+        radial-gradient(ellipse at 85% 70%, rgba(255, 101, 163, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 90%, rgba(64, 224, 208, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
 }
 
 /* ===== SCREENS ===== */
 .screen {
     display: none;
+    position: relative;
+    z-index: 1;
 }
 
 .screen.active {
@@ -30,40 +74,60 @@ body {
 .start-wrap {
     max-width: 480px;
     margin: 0 auto;
-    padding: 16px;
+    padding: 20px 16px 0;
     text-align: center;
     width: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .hero-img {
     width: 100%;
     max-width: 260px;
     height: auto;
-    border-radius: 20px;
-    margin: 8px auto 12px;
+    border-radius: var(--dream-radius-lg);
+    margin: 12px auto 16px;
     display: block;
-    box-shadow: 0 8px 24px rgba(108, 99, 255, 0.15);
+    box-shadow: var(--dream-shadow-glow);
+    border: 3px solid rgba(108, 99, 255, 0.1);
 }
 
 .title {
-    font-size: 32px;
+    font-size: 34px;
     font-weight: 900;
-    color: #6C63FF;
+    background: linear-gradient(135deg, var(--dream-primary), var(--dream-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     margin-bottom: 2px;
+    animation: dreamFloat 4s ease-in-out infinite;
+}
+
+@keyframes dreamFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
 }
 
 .subtitle {
     font-size: 14px;
-    color: #888;
+    color: var(--dream-text-muted);
     margin-bottom: 20px;
+    font-weight: 600;
 }
 
-/* Pack Selector */
+/* Pack Selector — Pill Buttons */
 .pack-scroll {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     overflow-x: auto;
-    padding: 4px 0 8px;
+    padding: 4px 0 10px;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
 }
@@ -74,72 +138,63 @@ body {
 
 .pack-btn {
     flex-shrink: 0;
-    padding: 8px 14px;
-    border: 2px solid #E0E0E0;
-    border-radius: 20px;
-    background: #fff;
-    font-size: 12px;
+    padding: 10px 16px;
+    border: 2px solid var(--dream-surface-2);
+    border-radius: var(--dream-radius-full);
+    background: var(--dream-white);
+    font-size: 13px;
     font-weight: 700;
     font-family: inherit;
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.2s;
+    transition: var(--dream-transition);
+    box-shadow: 0 2px 8px rgba(108, 99, 255, 0.06);
 }
 
 .pack-btn.active {
-    border-color: #6C63FF;
-    background: #EDE9FF;
-    color: #6C63FF;
+    border-color: var(--dream-primary);
+    background: linear-gradient(135deg, rgba(108, 99, 255, 0.1), rgba(167, 139, 250, 0.08));
+    color: var(--dream-primary);
+    box-shadow: var(--dream-shadow-cloud);
 }
 
 .pack-btn:active {
-    transform: scale(0.95);
+    transform: scale(0.93);
 }
 
 .pack-badge {
     display: inline-block;
-    background: linear-gradient(135deg, #6C63FF, #A78BFA);
-    color: #fff;
+    background: linear-gradient(135deg, var(--dream-primary), var(--dream-accent-pink));
+    color: var(--dream-white);
     font-size: 11px;
-    padding: 2px 10px;
-    border-radius: 12px;
+    padding: 3px 12px;
+    border-radius: var(--dream-radius-full);
     margin-left: 6px;
     font-weight: 700;
 }
 
-/* Safe bottom space for mini player */
 .safe-bottom {
     height: 80px;
 }
 
-/* Scrollable start screen */
-.start-wrap {
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 16px 16px 0;
-    text-align: center;
-    width: 100%;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
 /* Pickers */
 .picker {
-    margin-bottom: 16px;
+    margin-bottom: 18px;
     text-align: left;
 }
 
 .picker h3 {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 800;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    color: var(--dream-text);
 }
 
-/* Category Grid — always 4 cols, no overflow */
+/* Category Grid — "Dream Bubbles" */
 .cat-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
+    gap: 8px;
 }
 
 .cat-btn {
@@ -147,36 +202,39 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: #fff;
+    background: var(--dream-white);
     border: 2px solid transparent;
-    border-radius: 12px;
-    padding: 8px 4px;
+    border-radius: var(--dream-radius-sm);
+    padding: 10px 4px;
     cursor: pointer;
     font-family: inherit;
     font-size: 0;
-    transition: all 0.2s;
-    min-height: 64px;
+    transition: var(--dream-transition);
+    min-height: 68px;
+    box-shadow: 0 2px 10px rgba(108, 99, 255, 0.06);
 }
 
 .cat-btn:active {
-    transform: scale(0.95);
+    transform: scale(0.92);
 }
 
 .cat-btn.active {
-    border-color: #6C63FF;
-    background: #EDE9FF;
+    border-color: var(--dream-primary);
+    background: linear-gradient(135deg, rgba(108, 99, 255, 0.06), rgba(255, 101, 163, 0.04));
+    box-shadow: var(--dream-shadow-cloud);
 }
 
 .cat-emoji {
-    font-size: 24px;
+    font-size: 26px;
     display: block;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.08));
 }
 
 .cat-name {
     font-size: 10px;
     font-weight: 700;
-    color: #444;
-    margin-top: 2px;
+    color: var(--dream-text-muted);
+    margin-top: 3px;
     display: block;
     white-space: nowrap;
     overflow: hidden;
@@ -184,69 +242,72 @@ body {
     max-width: 100%;
 }
 
-/* Difficulty */
+/* Difficulty — "Gradient Bubble Buttons" */
 .diff-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
+    gap: 8px;
 }
 
 .diff {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: #fff;
+    background: var(--dream-white);
     border: 2px solid transparent;
-    border-radius: 12px;
-    padding: 10px 4px;
+    border-radius: var(--dream-radius-sm);
+    padding: 12px 4px;
     cursor: pointer;
     font-family: inherit;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
-    transition: all 0.2s;
+    transition: var(--dream-transition);
+    box-shadow: 0 2px 8px rgba(108, 99, 255, 0.06);
 }
 
 .diff span {
-    font-size: 20px;
+    font-size: 22px;
 }
 
 .diff small {
     font-size: 10px;
-    color: #999;
-    font-weight: 500;
+    color: var(--dream-text-muted);
+    font-weight: 600;
 }
 
 .diff.active {
-    border-color: #FFD93D;
-    background: #FFFDE7;
+    border-color: var(--dream-accent-gold);
+    background: linear-gradient(135deg, rgba(255, 217, 61, 0.15), rgba(255, 140, 192, 0.08));
+    box-shadow: 0 4px 16px rgba(255, 217, 61, 0.2);
 }
 
-/* Play button */
+/* Play Button — "Dream Launch" */
 .play-btn {
     display: block;
     width: 100%;
-    padding: 16px;
-    margin-top: 12px;
+    padding: 18px;
+    margin-top: 14px;
     border: none;
-    background: linear-gradient(135deg, #6C63FF, #A78BFA);
-    color: #fff;
-    border-radius: 14px;
+    background: linear-gradient(135deg, var(--dream-primary), #A78BFA);
+    color: var(--dream-white);
+    border-radius: var(--dream-radius-full);
     font-size: 18px;
     font-weight: 800;
     cursor: pointer;
     font-family: inherit;
-    box-shadow: 0 6px 20px rgba(108, 99, 255, 0.3);
-    transition: transform 0.2s;
+    box-shadow: 0 8px 24px var(--dream-primary-glow);
+    transition: var(--dream-transition);
 }
 
 .play-btn:active {
-    transform: scale(0.97);
+    transform: scale(0.95) translateY(2px);
+    box-shadow: 0 4px 12px var(--dream-primary-glow);
 }
 
 .play-btn.alt {
-    background: linear-gradient(135deg, #FF6B9D, #FF8CC0);
-    box-shadow: 0 6px 20px rgba(255, 107, 157, 0.3);
-    margin-top: 8px;
+    background: linear-gradient(135deg, var(--dream-secondary), var(--dream-accent-pink));
+    box-shadow: 0 8px 24px var(--dream-secondary-glow);
+    margin-top: 10px;
 }
 
 /* ===== GAME SCREEN ===== */
@@ -254,26 +315,35 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 12px;
-    background: #fff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 2px 12px rgba(108, 99, 255, 0.06);
     position: sticky;
     top: 0;
     z-index: 10;
+    border-bottom: 1px solid rgba(108, 99, 255, 0.06);
 }
 
 .icon-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
+    width: 42px;
+    height: 42px;
+    border-radius: var(--dream-radius-sm);
     border: none;
-    background: #F0EEFF;
+    background: var(--dream-surface-1);
     font-size: 18px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    transition: var(--dream-transition);
+}
+
+.icon-btn:active {
+    transform: scale(0.88);
+    background: var(--dream-surface-2);
 }
 
 .stats {
@@ -285,9 +355,9 @@ body {
 
 .st {
     font-size: 13px;
-    background: #F8F9FF;
-    padding: 4px 8px;
-    border-radius: 8px;
+    background: var(--dream-surface-1);
+    padding: 6px 10px;
+    border-radius: 10px;
     white-space: nowrap;
 }
 
@@ -295,22 +365,22 @@ body {
     font-weight: 800;
 }
 
-/* ===== BOARD ===== */
+/* ===== BOARD — "Dream Grid" ===== */
 .board-wrap {
     padding: 12px;
+    padding-bottom: 70px;
     display: flex;
     justify-content: center;
 }
 
 .board {
     display: grid;
-    gap: 6px;
+    gap: 8px;
     width: 100%;
     max-width: 420px;
     margin: 0 auto;
 }
 
-/* Column variants set by JS */
 .board.c3 {
     grid-template-columns: repeat(3, 1fr);
 }
@@ -327,15 +397,15 @@ body {
     grid-template-columns: repeat(6, 1fr);
 }
 
-/* ===== CARDS ===== */
+/* ===== CARDS — "Volumetric Dream Cards" ===== */
 .card {
     position: relative;
     width: 100%;
     height: 0;
     padding-bottom: 100%;
     cursor: pointer;
-    -webkit-perspective: 600px;
-    perspective: 600px;
+    -webkit-perspective: 800px;
+    perspective: 800px;
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -347,8 +417,8 @@ body {
     left: 0;
     -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
-    -webkit-transition: -webkit-transform 0.5s;
-    transition: transform 0.5s;
+    -webkit-transition: -webkit-transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .card.flipped .card-inner,
@@ -364,41 +434,39 @@ body {
     height: 100%;
     top: 0;
     left: 0;
-    border-radius: 12px;
+    border-radius: var(--dream-radius-sm);
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-    display: -webkit-flex;
     display: flex;
-    -webkit-align-items: center;
     align-items: center;
-    -webkit-justify-content: center;
     justify-content: center;
     overflow: hidden;
 }
 
-/* Front = hidden side (question mark) */
+/* Front = hidden side — dreamy gradient */
 .card-front {
     background: linear-gradient(145deg, #7C6BFF, #A78BFA);
-    box-shadow: 0 3px 10px rgba(108, 99, 255, 0.25);
+    box-shadow: 0 4px 14px var(--dream-primary-glow);
     z-index: 2;
 }
 
 .card-front::after {
     content: '?';
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 900;
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(255, 255, 255, 0.3);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Back = revealed side (emoji / letter) */
+/* Back = revealed side */
 .card-back {
-    background: #fff;
-    border: 2px solid #E0E0E0;
+    background: var(--dream-white);
+    border: 2px solid var(--dream-surface-2);
     -webkit-transform: rotateY(180deg);
     transform: rotateY(180deg);
     z-index: 1;
-    -webkit-flex-direction: column;
     flex-direction: column;
+    box-shadow: 0 2px 8px rgba(108, 99, 255, 0.06);
 }
 
 .card-emoji {
@@ -410,20 +478,20 @@ body {
     font-size: 36px;
     font-weight: 900;
     line-height: 1;
-    font-family: 'Nunito', sans-serif;
+    font-family: var(--font-main);
 }
 
-/* Theme colors for card fronts */
+/* Theme colors for card fronts — soft dream pastels */
 .card[data-theme="animals"] .card-front {
-    background: linear-gradient(145deg, #FF6B9D, #FF9A9A);
+    background: linear-gradient(145deg, #FF6B9D, #FF9EC5);
 }
 
 .card[data-theme="fruits"] .card-front {
-    background: linear-gradient(145deg, #6BCB77, #A8E6A3);
+    background: linear-gradient(145deg, #6BCB77, #A8E6B0);
 }
 
 .card[data-theme="transport"] .card-front {
-    background: linear-gradient(145deg, #4ECDC4, #7BE0DA);
+    background: linear-gradient(145deg, #40E0D0, #7BE8DA);
 }
 
 .card[data-theme="ocean"] .card-front {
@@ -431,15 +499,15 @@ body {
 }
 
 .card[data-theme="space"] .card-front {
-    background: linear-gradient(145deg, #7B2FF7, #A67BFF);
+    background: linear-gradient(145deg, #7B2FF7, #B78BFF);
 }
 
 .card[data-theme="food"] .card-front {
-    background: linear-gradient(145deg, #FF8C42, #FFB07C);
+    background: linear-gradient(145deg, #FF8C42, #FFB88C);
 }
 
 .card[data-theme="sports"] .card-front {
-    background: linear-gradient(145deg, #E84393, #FD79A8);
+    background: linear-gradient(145deg, #E84393, #FD9EC8);
 }
 
 .card[data-theme="weather"] .card-front {
@@ -455,7 +523,7 @@ body {
 }
 
 .card[data-theme="fantasy"] .card-front {
-    background: linear-gradient(145deg, #E17055, #FAB1A0);
+    background: linear-gradient(145deg, #E17055, #FAC1A0);
 }
 
 .card[data-theme="faces"] .card-front {
@@ -471,7 +539,7 @@ body {
 }
 
 .card[data-theme="numbers"] .card-front {
-    background: linear-gradient(145deg, #E84393, #FD79A8);
+    background: linear-gradient(145deg, #E84393, #FD9EC8);
 }
 
 .card[data-theme="shapes"] .card-front {
@@ -494,14 +562,14 @@ body {
     background: linear-gradient(145deg, #FDA7DF, #D980FA);
 }
 
-/* Matched / Wrong states */
+/* Matched — Dream Success */
 .card.matched .card-back {
-    border-color: #6BCB77;
-    background: #F0FFF0;
-    animation: pop 0.4s;
+    border-color: var(--dream-tertiary);
+    background: linear-gradient(135deg, #F0FFFC, #E8FFF5);
+    animation: dreamPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-@keyframes pop {
+@keyframes dreamPop {
 
     0%,
     100% {
@@ -509,16 +577,17 @@ body {
     }
 
     50% {
-        transform: rotateY(180deg) scale(1.1);
+        transform: rotateY(180deg) scale(1.12);
     }
 }
 
+/* Wrong — Gentle Shake */
 .card.wrong .card-back {
     border-color: #EF4444;
-    animation: shake 0.4s;
+    animation: dreamShake 0.4s ease;
 }
 
-@keyframes shake {
+@keyframes dreamShake {
 
     0%,
     100% {
@@ -526,109 +595,153 @@ body {
     }
 
     25% {
-        transform: rotateY(180deg) translateX(-6px);
+        transform: rotateY(180deg) translateX(-5px);
     }
 
     75% {
-        transform: rotateY(180deg) translateX(6px);
+        transform: rotateY(180deg) translateX(5px);
     }
 }
 
-/* ===== WIN SCREEN ===== */
+/* ===== WIN SCREEN — "Dream-Hop Celebration" ===== */
 .win-bg {
     min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 16px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    padding: 20px;
+    background: linear-gradient(135deg, var(--dream-primary), #A78BFA, var(--dream-secondary));
     position: relative;
     overflow: hidden;
 }
 
+/* Floating particles */
+.win-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 30%),
+        radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 25%),
+        radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.08) 0%, transparent 35%);
+    pointer-events: none;
+}
+
 .win-card {
-    background: #fff;
-    border-radius: 24px;
-    padding: 32px 24px;
+    background: linear-gradient(180deg, var(--dream-white), var(--dream-surface-1));
+    border-radius: var(--dream-radius-lg);
+    padding: 36px 28px;
     text-align: center;
     max-width: 380px;
     width: 100%;
     position: relative;
     z-index: 2;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--dream-shadow-lifted);
+    animation: winBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes winBounce {
+    0% {
+        transform: scale(0.3) rotate(-5deg);
+        opacity: 0;
+    }
+
+    60% {
+        transform: scale(1.05) rotate(1deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0);
+        opacity: 1;
+    }
 }
 
 .trophy {
-    font-size: 56px;
-    animation: bounce 1.5s infinite;
+    font-size: 64px;
+    animation: trophyBounce 1.5s ease-in-out infinite;
 }
 
-@keyframes bounce {
+@keyframes trophyBounce {
 
     0%,
     100% {
-        transform: translateY(0)
+        transform: translateY(0) scale(1);
+    }
+
+    25% {
+        transform: translateY(-14px) scale(1.05);
     }
 
     50% {
-        transform: translateY(-10px)
+        transform: translateY(-6px) scale(1.02);
     }
 }
 
 .win-card h2 {
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 900;
-    color: #6C63FF;
-    margin: 8px 0 4px;
+    background: linear-gradient(135deg, var(--dream-primary), var(--dream-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 10px 0 4px;
 }
 
 .win-card p {
-    font-size: 14px;
-    color: #888;
-    margin-bottom: 16px;
+    font-size: 15px;
+    color: var(--dream-text-muted);
+    margin-bottom: 18px;
+    font-weight: 600;
 }
 
 .win-row {
     display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
+    gap: 10px;
+    margin-bottom: 22px;
 }
 
 .win-st {
     flex: 1;
-    background: #F8F9FF;
-    border-radius: 12px;
-    padding: 10px 6px;
+    background: var(--dream-surface-1);
+    border-radius: var(--dream-radius-sm);
+    padding: 12px 8px;
     text-align: center;
+    border: 1px solid rgba(108, 99, 255, 0.06);
 }
 
 .win-st small {
     font-size: 11px;
-    color: #888;
+    color: var(--dream-text-muted);
     display: block;
+    font-weight: 600;
 }
 
 .win-st b {
-    font-size: 16px;
+    font-size: 17px;
     display: block;
-    margin-top: 2px;
+    margin-top: 4px;
+    color: var(--dream-primary);
 }
 
 /* Confetti */
 .confetti-piece {
     position: absolute;
-    border-radius: 2px;
-    animation: fall linear infinite;
+    border-radius: 3px;
+    animation: dreamFall linear infinite;
 }
 
-@keyframes fall {
+@keyframes dreamFall {
     0% {
-        transform: translateY(-100vh) rotate(0);
+        transform: translateY(-100vh) rotate(0) scale(1);
+        opacity: 1;
+    }
+
+    80% {
         opacity: 1;
     }
 
     100% {
-        transform: translateY(100vh) rotate(720deg);
+        transform: translateY(100vh) rotate(1080deg) scale(0.5);
         opacity: 0;
     }
 }
@@ -664,7 +777,7 @@ body {
     }
 }
 
-/* ===== TABLET — iPad mini & iPad Air ===== */
+/* ===== TABLET ===== */
 @media (min-width: 600px) {
     .start-wrap {
         max-width: 680px;
@@ -677,7 +790,7 @@ body {
     }
 
     .title {
-        font-size: 40px;
+        font-size: 42px;
     }
 
     .subtitle {
@@ -696,7 +809,7 @@ body {
     }
 
     .cat-btn {
-        padding: 12px 6px;
+        padding: 14px 6px;
         min-height: 80px;
         border-radius: 16px;
     }
@@ -731,11 +844,10 @@ body {
     .play-btn {
         padding: 18px;
         font-size: 20px;
-        border-radius: 16px;
+        border-radius: var(--dream-radius-full);
         margin-top: 16px;
     }
 
-    /* Game board */
     .topbar {
         padding: 10px 16px;
     }
@@ -744,7 +856,7 @@ body {
         width: 48px;
         height: 48px;
         font-size: 22px;
-        border-radius: 12px;
+        border-radius: 14px;
     }
 
     .stats {
@@ -759,6 +871,7 @@ body {
 
     .board-wrap {
         padding: 16px;
+        padding-bottom: 70px;
     }
 
     .board {
@@ -778,7 +891,6 @@ body {
         font-size: 44px;
     }
 
-    /* Win */
     .win-card {
         padding: 40px 32px;
         border-radius: 28px;
@@ -786,11 +898,11 @@ body {
     }
 
     .trophy {
-        font-size: 64px;
+        font-size: 72px;
     }
 
     .win-card h2 {
-        font-size: 32px;
+        font-size: 34px;
     }
 
     .win-st {
@@ -806,7 +918,7 @@ body {
     }
 }
 
-/* ===== LARGE TABLET — iPad Air landscape, iPad Pro ===== */
+/* ===== LARGE TABLET ===== */
 @media (min-width: 900px) {
     .start-wrap {
         max-width: 760px;
@@ -851,7 +963,7 @@ body {
     }
 }
 
-/* ===== LANDSCAPE on tablets ===== */
+/* ===== LANDSCAPE ===== */
 @media (max-height: 600px) and (min-width: 600px) {
     .hero-img {
         max-width: 160px;
@@ -906,6 +1018,7 @@ body {
 
     .board-wrap {
         padding: 8px;
+        padding-bottom: 70px;
     }
 
     .board {
@@ -913,22 +1026,22 @@ body {
     }
 }
 
-/* ===== MINI MUSIC PLAYER ===== */
+/* ===== MINI MUSIC PLAYER — "Dream Cloud" ===== */
 .mini-player {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: 6px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: rgba(247, 246, 254, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 6px 14px calc(10px + env(safe-area-inset-bottom, 0px));
     z-index: 9999;
     display: none;
     flex-direction: column;
     align-items: center;
-    box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.1);
-    border-top: 2px solid rgba(108, 99, 255, 0.2);
+    box-shadow: 0 -4px 24px rgba(108, 99, 255, 0.08);
+    border-top: 1px solid rgba(108, 99, 255, 0.08);
 }
 
 .mini-player.visible {
@@ -938,7 +1051,7 @@ body {
 .mp-track {
     font-size: 11px;
     font-weight: 700;
-    color: #6C63FF;
+    color: var(--dream-primary);
     max-width: 280px;
     white-space: nowrap;
     overflow: hidden;
@@ -950,88 +1063,84 @@ body {
 .mp-controls {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
 }
 
 .mp-btn {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     border: none;
-    background: #F0EEFF;
-    border-radius: 50%;
+    background: var(--dream-surface-1);
+    border-radius: var(--dream-radius-full);
     font-size: 14px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
+    transition: var(--dream-transition);
 }
 
 .mp-btn:active {
-    transform: scale(0.9);
+    transform: scale(0.85);
 }
 
 .mp-btn.big {
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
     font-size: 18px;
-    background: linear-gradient(135deg, #6C63FF, #A78BFA);
-    color: #fff;
+    background: linear-gradient(135deg, var(--dream-primary), #A78BFA);
+    color: var(--dream-white);
+    box-shadow: 0 4px 16px var(--dream-primary-glow);
 }
 
 .mp-info {
     font-size: 9px;
-    color: #aaa;
+    color: var(--dream-text-muted);
     margin-top: 1px;
 }
 
-/* Music FAB (shown when paused) */
+/* Music FAB */
 .music-fab {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
+    width: 54px;
+    height: 54px;
+    border-radius: var(--dream-radius-full);
     border: none;
-    background: linear-gradient(135deg, #6C63FF, #A78BFA);
+    background: linear-gradient(135deg, var(--dream-primary), #A78BFA);
     font-size: 24px;
     cursor: pointer;
-    box-shadow: 0 4px 20px rgba(108, 99, 255, 0.4);
+    box-shadow: 0 6px 24px var(--dream-primary-glow);
     z-index: 100;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s;
-    animation: pulse 2s ease infinite;
+    transition: var(--dream-transition);
+    animation: dreamPulse 2.5s ease infinite;
 }
 
 .music-fab:active {
     transform: scale(0.9);
 }
 
-@keyframes pulse {
+@keyframes dreamPulse {
 
     0%,
     100% {
-        box-shadow: 0 4px 16px rgba(108, 99, 255, 0.3);
+        box-shadow: 0 4px 16px var(--dream-primary-glow);
     }
 
     50% {
-        box-shadow: 0 4px 28px rgba(108, 99, 255, 0.6);
+        box-shadow: 0 6px 32px rgba(108, 99, 255, 0.4);
     }
 }
 
 .music-hint {
     font-size: 12px;
-    color: #aaa;
+    color: var(--dream-text-muted);
     text-align: center;
     margin-top: 8px;
-}
-
-/* Add bottom padding when mini player visible */
-.board-wrap {
-    padding-bottom: 70px;
 }
 
 /* Tablet mini player */
@@ -1042,14 +1151,14 @@ body {
     }
 
     .mp-btn {
-        width: 40px;
-        height: 40px;
+        width: 42px;
+        height: 42px;
         font-size: 16px;
     }
 
     .mp-btn.big {
-        width: 48px;
-        height: 48px;
+        width: 50px;
+        height: 50px;
         font-size: 20px;
     }
 
