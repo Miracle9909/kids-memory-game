@@ -114,24 +114,10 @@
             });
         }
 
-        // Init playlist immediately
+        // Init playlist — NO auto-play
         MusicPlayer.init();
 
-        // Auto-start music on first interaction
-        let musicStarted = false;
-        function tryStartMusic() {
-            if (!musicStarted) {
-                musicStarted = true;
-                MusicPlayer.play();
-                const fab = document.getElementById('musicFab');
-                if (fab) fab.textContent = '⏸️';
-            }
-        }
-        document.addEventListener('click', tryStartMusic, { once: true });
-        document.addEventListener('touchstart', tryStartMusic, { once: true });
-
         function toggleMusic() {
-            if (!musicStarted) { tryStartMusic(); return; }
             const playing = MusicPlayer.toggle();
             const fab = document.getElementById('musicFab');
             if (fab) fab.textContent = playing ? '⏸️' : '▶️';

@@ -1,76 +1,70 @@
 /* ============================================ */
-/* 🎵 Background Music — Web Audio API           */
-/* 5 bài nhạc thiếu nhi vui nhộn                 */
-/* Works on ALL devices including iOS Safari     */
+/* 🎵 Kids Memory Game — Music + SFX v4          */
+/* 5 bài nhạc mới — NO auto-play                 */
+/* Web Audio API synthesizer                     */
 /* ============================================ */
 
 const MusicPlayer = (() => {
-    let ctx = null;
-    let masterGain = null;
-    let isPlaying = false;
-    let melodyTimer = null;
-    let bassTimer = null;
-    let currentTrack = 0;
+    let ctx = null, masterGain = null, isPlaying = false, melodyTimer = null, currentTrack = 0;
 
-    // Note frequency helper
     const N = {
-        C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00, B4: 493.88,
-        C5: 523.25, D5: 587.33, E5: 659.26, F5: 698.46, G5: 783.99, A5: 880.00,
-        C3: 130.81, D3: 146.83, E3: 164.81, F3: 174.61, G3: 196.00, A3: 220.00, B3: 246.94
+        C3: 130.81, D3: 146.83, E3: 164.81, F3: 174.61, G3: 196.00, A3: 220.00, B3: 246.94,
+        C4: 261.63, D4: 293.66, Eb4: 311.13, E4: 329.63, F4: 349.23, Fs4: 369.99,
+        G4: 392.00, Ab4: 415.30, A4: 440.00, Bb4: 466.16, B4: 493.88,
+        C5: 523.25, D5: 587.33, Eb5: 622.25, E5: 659.26, F5: 698.46, G5: 783.99, A5: 880.00
     };
 
-    // 5 bài thiếu nhi vui nhộn — mỗi bài có melody cố định
     const TRACKS = [
         {
-            name: '🎵 Một Con Vịt',
-            melody: [N.C4, N.E4, N.G4, N.C5, N.G4, N.E4, N.C4, N.D4,
-            N.E4, N.F4, N.G4, N.A4, N.G4, N.F4, N.E4, N.D4,
-            N.C4, N.C4, N.E4, N.E4, N.G4, N.G4, N.C5, N.C5,
-            N.A4, N.G4, N.F4, N.E4, N.D4, N.E4, N.C4, N.C4],
-            bass: [N.C3, N.G3, N.C3, N.G3, N.F3, N.C3, N.G3, N.C3],
-            tempo: 260, wave: 'sine', harmony: 'triangle'
-        },
-        {
-            name: '🐥 Con Gà Trống',
-            melody: [N.G4, N.G4, N.A4, N.A4, N.G4, N.G4, N.E4, N.E4,
-            N.F4, N.F4, N.E4, N.E4, N.D4, N.D4, N.C4, N.C4,
-            N.E4, N.E4, N.F4, N.F4, N.G4, N.G4, N.A4, N.A4,
-            N.G4, N.F4, N.E4, N.D4, N.C4, N.E4, N.G4, N.C5],
-            bass: [N.C3, N.E3, N.G3, N.C3, N.F3, N.A3, N.G3, N.C3],
-            tempo: 240, wave: 'sine', harmony: 'sine'
-        },
-        {
-            name: '🌟 Twinkle Twinkle',
-            melody: [N.C4, N.C4, N.G4, N.G4, N.A4, N.A4, N.G4, N.G4,
-            N.F4, N.F4, N.E4, N.E4, N.D4, N.D4, N.C4, N.C4,
-            N.G4, N.G4, N.F4, N.F4, N.E4, N.E4, N.D4, N.D4,
-            N.G4, N.G4, N.F4, N.F4, N.E4, N.E4, N.D4, N.D4],
-            bass: [N.C3, N.C3, N.F3, N.C3, N.F3, N.C3, N.G3, N.C3],
-            tempo: 320, wave: 'sine', harmony: 'triangle'
-        },
-        {
-            name: '🐸 Chú Ếch Con',
-            melody: [N.C4, N.D4, N.E4, N.F4, N.G4, N.G4, N.G4, N.G4,
-            N.A4, N.A4, N.G4, N.G4, N.F4, N.F4, N.E4, N.E4,
-            N.D4, N.D4, N.C4, N.C4, N.E4, N.G4, N.C5, N.C5,
-            N.G4, N.E4, N.C4, N.D4, N.E4, N.F4, N.G4, N.C4],
+            name: '🎹 Bà Ơi Bà',
+            melody: [N.E4, N.E4, N.G4, N.G4, N.A4, N.A4, N.G4, N.G4,
+            N.E4, N.E4, N.D4, N.D4, N.C4, N.C4, N.C4, N.C4,
+            N.D4, N.D4, N.E4, N.E4, N.G4, N.G4, N.A4, N.G4,
+            N.E4, N.D4, N.C4, N.D4, N.E4, N.D4, N.C4, N.C4],
             bass: [N.C3, N.G3, N.A3, N.E3, N.F3, N.C3, N.G3, N.C3],
-            tempo: 230, wave: 'sine', harmony: 'triangle'
+            tempo: 280, wave: 'sine'
         },
         {
-            name: '🎪 Nhong Nhong Nhong',
-            melody: [N.E4, N.G4, N.C5, N.C5, N.A4, N.G4, N.E4, N.G4,
-            N.A4, N.G4, N.F4, N.E4, N.D4, N.E4, N.F4, N.D4,
-            N.E4, N.G4, N.C5, N.C5, N.D5, N.C5, N.A4, N.G4,
-            N.F4, N.E4, N.D4, N.C4, N.D4, N.E4, N.C4, N.C4],
-            bass: [N.C3, N.E3, N.F3, N.G3, N.C3, N.A3, N.G3, N.C3],
-            tempo: 220, wave: 'sine', harmony: 'sine'
+            name: '🌈 Cả Nhà Thương Nhau',
+            melody: [N.C4, N.E4, N.G4, N.E4, N.F4, N.A4, N.G4, N.E4,
+            N.D4, N.F4, N.E4, N.D4, N.C4, N.E4, N.D4, N.C4,
+            N.G4, N.A4, N.G4, N.E4, N.D4, N.E4, N.F4, N.G4,
+            N.A4, N.G4, N.F4, N.E4, N.D4, N.E4, N.C4, N.C4],
+            bass: [N.C3, N.F3, N.G3, N.C3, N.F3, N.G3, N.A3, N.C3],
+            tempo: 300, wave: 'triangle'
+        },
+        {
+            name: '🐝 Con Ong Vàng',
+            melody: [N.G4, N.E4, N.G4, N.A4, N.G4, N.E4, N.D4, N.C4,
+            N.D4, N.E4, N.F4, N.G4, N.A4, N.G4, N.F4, N.E4,
+            N.C5, N.A4, N.G4, N.E4, N.D4, N.E4, N.G4, N.A4,
+            N.G4, N.F4, N.E4, N.D4, N.C4, N.D4, N.C4, N.C4],
+            bass: [N.C3, N.E3, N.G3, N.C3, N.F3, N.A3, N.G3, N.C3],
+            tempo: 240, wave: 'sine'
+        },
+        {
+            name: '🎠 London Bridge',
+            melody: [N.G4, N.A4, N.G4, N.F4, N.E4, N.F4, N.G4, N.G4,
+            N.D4, N.E4, N.F4, N.F4, N.E4, N.F4, N.G4, N.G4,
+            N.G4, N.A4, N.G4, N.F4, N.E4, N.F4, N.G4, N.G4,
+            N.D4, N.D4, N.G4, N.E4, N.F4, N.G4, N.C4, N.C4],
+            bass: [N.G3, N.D3, N.E3, N.G3, N.C3, N.G3, N.D3, N.G3],
+            tempo: 260, wave: 'sine'
+        },
+        {
+            name: '🦋 Cháu Lên Ba',
+            melody: [N.C4, N.D4, N.E4, N.G4, N.A4, N.G4, N.E4, N.D4,
+            N.C4, N.D4, N.E4, N.G4, N.E4, N.D4, N.C4, N.C4,
+            N.A4, N.G4, N.E4, N.G4, N.A4, N.C5, N.A4, N.G4,
+            N.E4, N.G4, N.A4, N.G4, N.E4, N.D4, N.C4, N.C4],
+            bass: [N.C3, N.G3, N.A3, N.E3, N.F3, N.C3, N.G3, N.C3],
+            tempo: 250, wave: 'triangle'
         }
     ];
 
-    function init() {
-        currentTrack = Math.floor(Math.random() * TRACKS.length);
-    }
+    let phraseIndex = 0;
+
+    function init() { currentTrack = 0; updateUI(); }
 
     function ensureCtx() {
         if (!ctx) {
@@ -83,21 +77,16 @@ const MusicPlayer = (() => {
     }
 
     function playNote(freq, time, dur, type = 'sine', vol = 0.5) {
-        const osc = ctx.createOscillator();
-        const g = ctx.createGain();
-        osc.type = type;
-        osc.frequency.value = freq;
+        if (!ctx) return;
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = type; o.frequency.value = freq;
         g.gain.setValueAtTime(0, time);
-        g.gain.linearRampToValueAtTime(vol, time + 0.05);
-        g.gain.setValueAtTime(vol * 0.8, time + dur * 0.6);
+        g.gain.linearRampToValueAtTime(vol, time + 0.04);
+        g.gain.setValueAtTime(vol * 0.7, time + dur * 0.6);
         g.gain.linearRampToValueAtTime(0, time + dur);
-        osc.connect(g);
-        g.connect(masterGain);
-        osc.start(time);
-        osc.stop(time + dur + 0.02);
+        o.connect(g); g.connect(masterGain);
+        o.start(time); o.stop(time + dur + 0.02);
     }
-
-    let phraseIndex = 0;
 
     function generateMelody() {
         if (!isPlaying || !ctx) return;
@@ -107,103 +96,42 @@ const MusicPlayer = (() => {
         const now = ctx.currentTime;
         const noteDur = track.tempo / 1000;
 
-        // Play 8 melody notes as a phrase (cycle through the full melody)
         for (let i = 0; i < 8; i++) {
             const noteIdx = (phraseIndex * 8 + i) % mel.length;
             const freq = mel[noteIdx];
-            const t = now + i * noteDur;
-            const dur = noteDur * 0.85;
-
-            // Main melody
-            playNote(freq, t, dur, track.wave, 0.4);
-
-            // Add subtle harmony on every other note
-            if (i % 2 === 0) {
-                playNote(freq * 1.5, t, dur * 0.6, track.harmony, 0.12);
-            }
+            const tm = now + i * noteDur;
+            const dur = noteDur * 0.8;
+            playNote(freq, tm, dur, track.wave || 'sine', 0.35);
+            if (i % 2 === 0) playNote(freq * 1.5, tm, dur * 0.5, 'triangle', 0.08);
         }
 
-        // Bass: 2 notes per phrase
         const bassIdx = (phraseIndex * 2) % bas.length;
-        playNote(bas[bassIdx], now, noteDur * 4, 'triangle', 0.22);
-        playNote(bas[(bassIdx + 1) % bas.length], now + noteDur * 4, noteDur * 4, 'triangle', 0.18);
+        playNote(bas[bassIdx], now, noteDur * 4, 'triangle', 0.18);
+        playNote(bas[(bassIdx + 1) % bas.length], now + noteDur * 4, noteDur * 4, 'triangle', 0.12);
 
         phraseIndex++;
         if (phraseIndex * 8 >= mel.length) phraseIndex = 0;
-
         melodyTimer = setTimeout(generateMelody, track.tempo * 8);
     }
 
-    function play() {
-        ensureCtx();
-        isPlaying = true;
-        phraseIndex = 0;
-        generateMelody();
-        updateUI();
-    }
-
-    function pause() {
-        isPlaying = false;
-        clearTimeout(melodyTimer);
-        clearTimeout(bassTimer);
-        updateUI();
-    }
-
-    function toggle() {
-        if (isPlaying) pause(); else play();
-        return isPlaying;
-    }
-
-    function nextTrack() {
-        const wasPlaying = isPlaying;
-        pause();
-        currentTrack = (currentTrack + 1) % TRACKS.length;
-        phraseIndex = 0;
-        if (wasPlaying) setTimeout(play, 100);
-        updateUI();
-    }
-
-    function prevTrack() {
-        const wasPlaying = isPlaying;
-        pause();
-        currentTrack = (currentTrack - 1 + TRACKS.length) % TRACKS.length;
-        phraseIndex = 0;
-        if (wasPlaying) setTimeout(play, 100);
-        updateUI();
-    }
-
-    function reshufflePlaylist() {
-        const wasPlaying = isPlaying;
-        pause();
-        currentTrack = Math.floor(Math.random() * TRACKS.length);
-        phraseIndex = 0;
-        if (wasPlaying) setTimeout(play, 100);
-        updateUI();
-    }
-
-    function getCurrentTitle() {
-        return TRACKS[currentTrack].name;
-    }
-
-    function getTrackInfo() {
-        return `${currentTrack + 1}/${TRACKS.length}`;
-    }
+    function play() { ensureCtx(); isPlaying = true; phraseIndex = 0; generateMelody(); updateUI(); }
+    function pause() { isPlaying = false; clearTimeout(melodyTimer); updateUI(); }
+    function toggle() { if (isPlaying) pause(); else play(); return isPlaying; }
+    function nextTrack() { const w = isPlaying; pause(); currentTrack = (currentTrack + 1) % TRACKS.length; phraseIndex = 0; if (w) setTimeout(play, 100); updateUI(); }
+    function prevTrack() { const w = isPlaying; pause(); currentTrack = (currentTrack - 1 + TRACKS.length) % TRACKS.length; phraseIndex = 0; if (w) setTimeout(play, 100); updateUI(); }
+    function reshufflePlaylist() { const w = isPlaying; pause(); currentTrack = Math.floor(Math.random() * TRACKS.length); phraseIndex = 0; if (w) setTimeout(play, 100); updateUI(); }
 
     function updateUI() {
-        const titleEl = document.getElementById('track-title');
-        const infoEl = document.getElementById('track-info');
-        const fabEl = document.getElementById('musicFab') || document.getElementById('musicPlayBtn');
-        const miniEl = document.getElementById('miniPlayer');
-
-        if (titleEl) titleEl.textContent = getCurrentTitle();
-        if (infoEl) infoEl.textContent = getTrackInfo();
-        if (fabEl) fabEl.textContent = isPlaying ? '⏸️' : '▶️';
-        if (miniEl) miniEl.classList.toggle('visible', true);
+        const el = id => document.getElementById(id);
+        if (el('track-title')) el('track-title').textContent = isPlaying ? TRACKS[currentTrack].name : '🎵 Nhấn ▶ để phát nhạc nền';
+        if (el('track-info')) el('track-info').textContent = `${currentTrack + 1}/${TRACKS.length}`;
+        const btn = el('musicPlayBtn') || el('musicFab');
+        if (btn) btn.textContent = isPlaying ? '⏸️' : '▶️';
     }
 
     return {
         init, play, pause, toggle, nextTrack, prevTrack,
-        reshufflePlaylist, getCurrentTitle, getTrackInfo,
+        reshufflePlaylist,
         get isPlaying() { return isPlaying; },
         get totalTracks() { return TRACKS.length; }
     };
@@ -211,8 +139,7 @@ const MusicPlayer = (() => {
 
 // ===== SFX =====
 const SFX = (() => {
-    let ctx = null;
-    let gain = null;
+    let ctx = null, gain = null;
 
     function init() {
         if (ctx) return;
@@ -225,17 +152,13 @@ const SFX = (() => {
     function note(freq, start, dur, type = 'sine') {
         init();
         if (ctx.state === 'suspended') ctx.resume();
-        const osc = ctx.createOscillator();
-        const g = ctx.createGain();
-        osc.type = type;
-        osc.frequency.value = freq;
+        const osc = ctx.createOscillator(), g = ctx.createGain();
+        osc.type = type; osc.frequency.value = freq;
         g.gain.setValueAtTime(0, start);
         g.gain.linearRampToValueAtTime(0.6, start + 0.03);
         g.gain.linearRampToValueAtTime(0, start + dur);
-        osc.connect(g);
-        g.connect(gain);
-        osc.start(start);
-        osc.stop(start + dur + 0.01);
+        osc.connect(g); g.connect(gain);
+        osc.start(start); osc.stop(start + dur + 0.01);
     }
 
     function t() { init(); return ctx.currentTime; }
